@@ -31,7 +31,7 @@ func NewClient(apiKey string) *Client {
 	return &Client{
 		url: yandexRCAUrl + "?key=" + apiKey + "&url=",
 		client: &http.Client{
-			Timeout: time.Duration(10) * time.Second,
+			Timeout: time.Duration(20) * time.Second,
 		},
 	}
 }
