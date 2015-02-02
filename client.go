@@ -44,6 +44,10 @@ func (c *Client) Get(url string) (ctx *Response, err error) {
 		return
 	}
 	switch httpresp.StatusCode {
+	case http.StatusOK: // 200 - OK
+		ctx = new(Response)
+		err = json.NewDecoder(httpresp.Body).Decode(ctx)
+		httpresp.Body.Close()
 	case http.StatusUnauthorized: // 401 Unauthorized - Невалидный ключ.
 		err = &Error{
 			Code:    httpresp.StatusCode,
@@ -55,10 +59,18 @@ func (c *Client) Get(url string) (ctx *Response, err error) {
 			Code:    httpresp.StatusCode,
 			Message: "no API key",
 		}
-	default:
-		ctx = new(Response)
-		err = json.NewDecoder(httpresp.Body).Decode(ctx)
+	default: // Другие коды ошибок
+		ectx := new(Error)
+		err = json.NewDecoder(httpresp.Body).Decode(ectx)
 		httpresp.Body.Close()
+		if err != nil {
+			err = &Error{
+				Code:    httpresp.StatusCode,
+				Message: "unknown error",
+			}
+			return
+		}
+		err = ectx
 	}
 	return
 }
