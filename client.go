@@ -1,4 +1,4 @@
-// Библиотека для работы с Yandex Rich Content API
+// Package yrca является библиотекой для работы с Yandex Rich Content API
 // (https://tech.yandex.ru/rca/)
 //
 // Rich Content API предоставляет доступ к контентной системе Яндекса. В ней хранятся десятки
@@ -84,7 +84,7 @@ func (c *Client) GetFull(url string) (ctx *Response, err error) {
 type Error struct {
 	Type    string `json:"error_type,omitempty"`    // internal или external
 	Code    int    `json:"error_code,string"`       // код ошибки (HTTP)
-	Url     string `json:"url,omitempty"`           // запрашиваемый адрес или адрес с ошибкой
+	URL     string `json:"url,omitempty"`           // запрашиваемый адрес или адрес с ошибкой
 	Message string `json:"error_message,omitempty"` // описание ошибки
 }
 
@@ -95,8 +95,8 @@ func (e *Error) Error() string {
 
 // Response описывает формат ответа, возвращаемый сервисом.
 type Response struct {
-	Url        string   `json:"url"`               // Адрес страницы, извлеченный из запроса.
-	FinalUrl   string   `json:"finalurl"`          // Адрес страницы в каноническом виде.
+	URL        string   `json:"url"`               // Адрес страницы, извлеченный из запроса.
+	FinalURL   string   `json:"finalurl"`          // Адрес страницы в каноническом виде.
 	Title      string   `json:"title,omitempty"`   // Заголовок страницы.
 	Content    string   `json:"content,omitempty"` // Краткая аннотация страницы (сниппет) или ее полный текст.
 	Img        []string `json:"img,omitempty"`     // Список ссылок на основные или все изображения на странице.
@@ -111,5 +111,5 @@ type Response struct {
 // Video описывает информацию о видео-файлах, найденных по запрашиваемому адресу.
 type Video struct {
 	Duration int    `json:"duration,omitempty"` // продолжительность
-	Url      string `json:"url,omitempty"`      // ссылка для загрузки
+	URL      string `json:"url,omitempty"`      // ссылка для загрузки
 }

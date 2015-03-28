@@ -35,7 +35,7 @@ func Example() {
 	if err != nil {
 		panic(err)
 	}
-	fmt.Println(ctx.FinalUrl)
+	fmt.Println(ctx.FinalURL)
 	fmt.Print(ctx.Title)
 	// Output:
 	// http://golang.org/
