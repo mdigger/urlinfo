@@ -11,6 +11,7 @@ func TestRCA(t *testing.T) {
 	enc.SetIndent("", "  ")
 
 	urls := []string{
+		"http://appleinsider.com/articles/16/09/24/review-apple-watch-series-2-is-a-great-improvement-but-watchos-3-steals-the-show",
 		"http://ya.ru",
 		"https://godoc.org/golang.org/x/net/html",
 		"https://github.com/mdigger/yrca/blob/master/client.go",
@@ -19,13 +20,11 @@ func TestRCA(t *testing.T) {
 		"https://65.media.tumblr.com/e2906df46bf289df90625afdf625c187/tumblr_oe23mgNqLX1qazdu9o1_1280.jpg",
 		"http://lenta.ru",
 		"http://www.livejournal.com/media/843446.html",
+		"http://localhost:8099/",
+		"http://flibusta.net",
 	}
 	for _, url := range urls {
-		info, err := Get(url)
-		if err != nil {
-			t.Error(err)
-		}
 		enc.Encode(url)
-		enc.Encode(info)
+		enc.Encode(Get(url))
 	}
 }

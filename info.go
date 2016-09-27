@@ -107,11 +107,11 @@ var (
 	ParseLimit = int64(64 << 10)
 )
 var httpClient = &http.Client{
-	Timeout: time.Second * 10,
+	Timeout: time.Second * 60,
 }
 
 // Get возвращает краткое описание информации, возвращаемое по указанному URL.
-func Get(url string) (*Info, error) {
+func Get(url string) *Info {
 	req, err := http.NewRequest(http.MethodGet, url, nil)
 	if UserAgent != "" {
 		req.Header.Set("User-Agent", UserAgent)
@@ -119,10 +119,14 @@ func Get(url string) (*Info, error) {
 	req.Close = true // close connection, not to produce open
 	resp, err := httpClient.Do(req)
 	if err != nil {
-		return nil, err
+		return &Info{
+			URL:         url,
+			Status:      http.StatusServiceUnavailable,
+			Description: err.Error(),
+		}
 	}
 	info := NewInfo(resp)
 	io.CopyN(ioutil.Discard, resp.Body, 2<<10) // skip full body response
 	resp.Body.Close()
-	return info, nil
+	return info
 }

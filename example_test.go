@@ -2,17 +2,13 @@ package urlinfo_test
 
 import (
 	"encoding/json"
-	"log"
 	"os"
 
 	"github.com/mdigger/urlinfo"
 )
 
 func Example() {
-	info, err := urlinfo.Get("http://mdigger.tumblr.com")
-	if err != nil {
-		log.Fatal(err)
-	}
+	info := urlinfo.Get("http://mdigger.tumblr.com")
 	enc := json.NewEncoder(os.Stdout)
 	enc.SetIndent("", "    ")
 	enc.Encode(info)
