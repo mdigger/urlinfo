@@ -6,6 +6,7 @@ import (
 	"io"
 	"io/ioutil"
 	"net/http"
+	"net/url"
 	"strings"
 	"time"
 
@@ -111,8 +112,13 @@ var httpClient = &http.Client{
 }
 
 // Get возвращает краткое описание информации, возвращаемое по указанному URL.
-func Get(url string) *Info {
-	req, err := http.NewRequest(http.MethodGet, url, nil)
+func Get(urlstr string) *Info {
+	// проверяем, что URL правильный и содержит полный путь.
+	purl, err := url.Parse(urlstr)
+	if err != nil || !purl.IsAbs() || purl.Host == "" {
+		return nil
+	}
+	req, err := http.NewRequest(http.MethodGet, urlstr, nil)
 	if UserAgent != "" {
 		req.Header.Set("User-Agent", UserAgent)
 	}
@@ -120,7 +126,7 @@ func Get(url string) *Info {
 	resp, err := httpClient.Do(req)
 	if err != nil {
 		return &Info{
-			URL:         url,
+			URL:         urlstr,
 			Status:      http.StatusServiceUnavailable,
 			Description: err.Error(),
 		}
