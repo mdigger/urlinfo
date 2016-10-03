@@ -64,11 +64,17 @@ parse:
 			}
 			switch name {
 			case "description":
-				i.Description = content
+				if i.Description == "" {
+					i.Description = content
+				}
 			case "title":
-				i.Title = content
+				if i.Title == "" {
+					i.Title = content
+				}
 			case "image":
-				i.Image = content
+				if i.Image == "" {
+					i.Image = content
+				}
 			}
 		}
 	}
