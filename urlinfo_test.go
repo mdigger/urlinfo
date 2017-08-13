@@ -3,7 +3,6 @@ package urlinfo
 import (
 	"encoding/json"
 	"fmt"
-	"net/http"
 	"os"
 	"strings"
 	"testing"
@@ -17,10 +16,8 @@ var urls = []string{
 	"https://github.com/mdigger/yrca/blob/master/client.go",
 	"https://www.tumblr.com/dashboard",
 	"http://mdigger.tumblr.com",
-	"https://65.media.tumblr.com/e2906df46bf289df90625afdf625c187/tumblr_oe23mgNqLX1qazdu9o1_1280.jpg",
 	"http://lenta.ru",
 	"http://www.livejournal.com/media/843446.html",
-	"http://localhost:8099/",
 	"http://flibusta.net",
 
 	"https://changelog.com/gotime/52",
@@ -71,13 +68,7 @@ func TestParse(t *testing.T) {
 	enc.SetIndent("", "  ")
 
 	for _, url := range urls {
-		resp, err := http.DefaultClient.Get(url)
-		if err != nil {
-			t.Error(err)
-			continue
-		}
-		enc.Encode(Parse(resp))
-		resp.Body.Close()
+		enc.Encode(Get(url))
 		fmt.Println(strings.Repeat("-", 80))
 	}
 }
