@@ -16,13 +16,18 @@ import (
 
 // Info describes the information located at the specified URL.
 type Info struct {
-	URL         string `json:"url"`
-	Status      int    `json:"status"`
-	Length      int64  `json:"length,omitempty"`
-	Type        string `json:"mediaType,omitempty"`
-	Title       string `json:"title,omitempty"`
-	Description string `json:"description,omitempty"`
-	Image       string `json:"image,omitempty"`
+	URL         string   `json:"url"`
+	Status      int      `json:"status"`
+	Length      int64    `json:"length,omitempty"`
+	Type        string   `json:"mediaType,omitempty"`
+	Title       string   `json:"title,omitempty"`
+	Description string   `json:"description,omitempty"`
+	Image       string   `json:"image,omitempty"`
+	Keywords    []string `json:"keywords,omitempty"`
+	ContentType string   `json:"type,omitempty"`
+	Video       string   `json:"video,omitempty"`
+	Locale      string   `json:"locale,omitempty"`
+	Site        string   `json:"site,omitempty"`
 }
 
 func (i *Info) parseHTML(r io.Reader) {
@@ -53,28 +58,49 @@ parse:
 			for _, attr := range token.Attr {
 				switch attr.Key {
 				case "name", "property":
-					name = attr.Val
+					name = strings.TrimSpace(attr.Val)
 				case "content":
-					content = attr.Val
+					content = strings.TrimSpace(attr.Val)
 				}
 			}
-			// remove the possible prefixes in the name
-			if indx := strings.LastIndexByte(name, byte(':')); indx > 0 {
-				name = name[indx+1:]
+			// fmt.Printf("%s: %s\n", name, content)
+			if len(name) == 0 || (len(content) == 0 && name != "og:title") {
+				continue
 			}
 			switch name {
-			case "description":
-				if i.Description == "" {
-					i.Description = content
+			case "title", "og:title":
+				i.Title = content
+			case "description", "og:description", "twitter:description":
+				i.Description = content
+			case "image", "og:image", "twitter:image", "twitter:image:src":
+				i.Image = content
+			case "keywords":
+				if len(i.Keywords) == 0 {
+					list := strings.Split(content, ",")
+					unique := make(map[string]struct{}, len(list))
+					result := make([]string, 0, len(list))
+					for _, item := range list {
+						item = strings.TrimSpace(item)
+						if _, ok := unique[item]; ok || len(item) == 0 {
+							continue
+						}
+						unique[item] = struct{}{}
+						result = append(result, item)
+					}
+					if len(result) > 0 {
+						i.Keywords = result
+					}
 				}
-			case "title":
-				if i.Title == "" {
-					i.Title = content
+			case "type", "og:type":
+				i.ContentType = content
+			case "og:video:url", "twitter:player":
+				if i.Video == "" {
+					i.Video = content
 				}
-			case "image":
-				if i.Image == "" {
-					i.Image = content
-				}
+			case "og:site_name":
+				i.Site = content
+			case "og:locale":
+				i.Locale = content
 			}
 		}
 	}
@@ -100,6 +126,7 @@ func NewInfo(resp *http.Response) *Info {
 			info.Image = url.String()
 		}
 	}
+	// fmt.Println(strings.Repeat("-", 68))
 	return info
 }
 
