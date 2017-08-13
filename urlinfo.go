@@ -1,19 +1,21 @@
 package urlinfo
 
 import (
+	"context"
 	"io"
 	"io/ioutil"
 	"net/http"
 	"net/url"
 	"strings"
 
+	"golang.org/x/net/context/ctxhttp"
 	"golang.org/x/net/html"
 	"golang.org/x/net/html/atom"
 )
 
 var (
 	// UserAgent используется как строка с указанием названия веб-браузера.
-	UserAgent = "mdigger/2.0"
+	UserAgent = "mdigger/2.1"
 	// ParseLimit накладывает ограничение на размер анализируемых данных. Слишком
 	// большой размер избыточен, т.к. мы анализируем только заголовок HTML.
 	ParseLimit = int64(64 << 10)
@@ -21,9 +23,15 @@ var (
 	KeywordMaxLength = 32
 )
 
-// Get возвращает информацию с описание указанного URL. Для запроса используется
-// http.DefaultClient.
-func Get(rawurl string) *Info {
+// Get возвращает информацию о странице. В случае неверного URL будет возвращен
+// nil. Во всех остальных случаях будет возвращено описание, хотя бы с ошибкой.
+func Get(url string) *Info {
+	return CtxGet(context.Background(), nil, url)
+}
+
+// CtxGet возвращает информацию о странице с использованием указанного клиента
+// и контекст. Если клиент не указан, то используется http.DefaultClient.
+func CtxGet(ctx context.Context, client *http.Client, rawurl string) *Info {
 	// проверяем, что URL правильный и содержит полный путь.
 	purl, err := url.Parse(rawurl)
 	if err != nil || !purl.IsAbs() || purl.Host == "" {
@@ -35,7 +43,7 @@ func Get(rawurl string) *Info {
 	}
 	// указываем, что соединение должно быть закрыто по окончании
 	req.Close = true
-	resp, err := http.DefaultClient.Do(req)
+	resp, err := ctxhttp.Do(ctx, client, req)
 	if err != nil {
 		return &Info{
 			URL:         rawurl,

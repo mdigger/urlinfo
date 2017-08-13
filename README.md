@@ -16,7 +16,7 @@ import (
 )
 
 func main() {
-	info := urlinfo.Get("http://mdigger.tumblr.com")
+	info := urlinfo.Get("https://www.youtube.com/watch?v=OHegEgC8uwY")
 	enc := json.NewEncoder(os.Stdout)
 	enc.SetIndent("", "    ")
 	enc.Encode(info)
@@ -28,20 +28,38 @@ Output:
 
 ```json
 {
-    "url": "http://mdigger.tumblr.com",
-    "status": 200,
-    "mediaType": "text/html; charset=UTF-8",
-    "title": "Копилка ненужных вещей",
-    "description": "У каждого человека должна быть своя \"копилка ненужных вещей\", которой он с радостью готов...",
-    "image": "http://68.media.tumblr.com/avatar_d1b501c5ba67_128.png",
-    "keywords": [
-        "юмор",
-        "цитаты",
-        "чиполлино",
-        "интроверт",
-        "еда"
-    ],
-    "type": "tumblr-feed:tumblelog",
-    "site": "tumblr"
+  "url": "https://www.youtube.com/watch?v=OHegEgC8uwY",
+  "status": 200,
+  "mediaType": "text/html; charset=utf-8",
+  "title": "БГ - Время наебениться",
+  "description": "Позвольте мне прервать ваши вечные споры, Позвольте расшатать скрепы и оковы. Время беспощадно, оно как волчица, Вот мы сидим здесь, а оно мчится. Ох бы жить...",
+  "image": "https://i.ytimg.com/vi/OHegEgC8uwY/hqdefault.jpg",
+  "keywords": [
+    "БГ",
+    "время",
+    "наебениться",
+    "Степанцов",
+    "bg",
+    "Аквариум",
+    "бг аудио",
+    "бг филми",
+    "филми",
+    "филм бг аудио",
+    "филми бг аудио",
+    "bg audio",
+    "бг...",
+    "бг субтитри",
+    "филми бг субтитри",
+    "бг музика",
+    "бг песни",
+    "маша и мечока",
+    "мики маус",
+    "гребенщиков",
+    "аквариум",
+    "город золотой"
+  ],
+  "type": "video",
+  "video": "https://www.youtube.com/embed/OHegEgC8uwY",
+  "site": "YouTube"
 }
 ```
