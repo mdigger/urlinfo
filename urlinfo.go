@@ -66,10 +66,12 @@ type Info struct {
 	ContentType string   `json:"mediaType,omitempty"`   // content-type
 	Title       string   `json:"title,omitempty"`       // заголовок
 	Description string   `json:"description,omitempty"` // краткое описание
+	Author      string   `json:"author,omitempty"`      // автор
 	Image       string   `json:"image,omitempty"`       // иллюстрация
 	Keywords    []string `json:"keywords,omitempty"`    // список ключевых слов
 	Type        string   `json:"type,omitempty"`        // тип содержимого
 	Video       string   `json:"video,omitempty"`       // ссылка на видео
+	Audio       string   `json:"audio,omitempty"`       // ссылка на звуковой файл
 	Locale      string   `json:"locale,omitempty"`      // язык
 	Site        string   `json:"site,omitempty"`        // название сайта
 }
@@ -172,7 +174,9 @@ func (i *Info) parse(r io.Reader) {
 				if i.Description == "" && !description {
 					i.Description = content
 				}
-			case "image", "og:image":
+			case "author", "article:author":
+				i.Author = content
+			case "image", "og:image", "og:image:url":
 				i.Image = content
 			case "twitter:image", "twitter:image:src":
 				// здесь картинки могут быть меньшего размера
@@ -221,6 +225,8 @@ func (i *Info) parse(r io.Reader) {
 				if i.Video == "" {
 					i.Video = content
 				}
+			case "og:audio":
+				i.Audio = content
 			case "og:locale":
 				i.Locale = content
 			case "og:site_name":
