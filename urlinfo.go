@@ -174,7 +174,7 @@ func (i *Info) parse(r io.Reader) {
 				if i.Description == "" && !description {
 					i.Description = content
 				}
-			case "author", "article:author":
+			case "author", "article:author", "book:author":
 				i.Author = content
 			case "image", "og:image", "og:image:url":
 				i.Image = content
